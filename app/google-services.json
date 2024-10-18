@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "757274026601",
+    "firebase_url": "https://fir-litelite-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "fir-litelite",
+    "storage_bucket": "fir-litelite.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:757274026601:android:702ea066aa383498a6f8f8",
+        "android_client_info": {
+          "package_name": "com.yerayyas.spotifymvvmhilt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1KsAt_-FDwTxP2S3j6w9dh6w_rcschcs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
