@@ -51,14 +51,15 @@ androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-com
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx" }
-firebase-firestore = { module = "com.google.firebase:firebase-firestore"}
-firebase-realtime = { module = "com.google.firebase:firebase-database-ktx"}
+firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
+firebase-realtime = { module = "com.google.firebase:firebase-database-ktx" }
+firebase-config = { module = "com.google.firebase:firebase-config-ktx" }
 
 #COMPOSE
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 
 #COIL
-coil = { module = "io.coil-kt:coil-compose", version.ref = "coilVersion"}
+coil = { module = "io.coil-kt:coil-compose", version.ref = "coilVersion" }
 
 
 [plugins]
@@ -70,7 +71,7 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 
 #FIREBASE
 googleServices = { id = "com.google.gms.google-services", version.ref = "services" }
-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics"}
+crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 
 #DAGGER HILT
 kotlinAndroidKsp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
