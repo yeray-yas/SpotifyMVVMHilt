@@ -10,6 +10,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.yerayyas.spotifymvvmhilt.domain.usecases.CanAccessToAppUseCase
 import com.yerayyas.spotifymvvmhilt.presentation.model.Artist
 import com.yerayyas.spotifymvvmhilt.presentation.model.Player
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +25,8 @@ import kotlinx.coroutines.withContext
 
 class HomeViewModel : ViewModel() {
 
+    private var canAccessToAppUseCase: CanAccessToAppUseCase = CanAccessToAppUseCase()
+
     private val realtimeDatabase = Firebase.database
     private var db: FirebaseFirestore = Firebase.firestore
 
@@ -33,12 +36,25 @@ class HomeViewModel : ViewModel() {
     private val _player = MutableStateFlow<Player?>(null)
     val player: StateFlow<Player?> = _player
 
+    private val _blockVersion = MutableStateFlow(false)
+    val blockVersion: StateFlow<Boolean> = _blockVersion
+
     init {
         /* repeat(20){
              loadData()
          }*/
+        checkUserVersion()
         getArtists()
         getPlayer()
+    }
+
+    private fun checkUserVersion() {
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                canAccessToAppUseCase()
+            }
+            _blockVersion.value = !result
+        }
     }
 
     private fun getPlayer() {
@@ -102,6 +118,26 @@ class HomeViewModel : ViewModel() {
         awaitClose {
             ref.removeEventListener(listener)
         }
+    }
+
+    fun onPlaySelected() {
+        if (player.value != null) {
+            val currentPlayer = _player.value?.copy(play = !player.value?.play!!)
+            val ref = realtimeDatabase.reference.child("player")
+            ref.setValue(currentPlayer)
+        }
+    }
+
+    fun onCancelSelected() {
+        val ref = realtimeDatabase.reference.child("player")
+        ref.setValue(null)
+
+    }
+
+    fun addPlayer(artist: Artist) {
+        val ref = realtimeDatabase.reference.child("player")
+        val player = Player(artist = artist, play = true)
+        ref.setValue(player)
     }
 }
 

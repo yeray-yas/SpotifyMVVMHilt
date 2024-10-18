@@ -1,5 +1,8 @@
 package com.yerayyas.spotifymvvmhilt.presentation.home
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,6 +38,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.yerayyas.spotifymvvmhilt.presentation.components.ArtistItem
+import com.yerayyas.spotifymvvmhilt.presentation.components.PlayerComponent
+import com.yerayyas.spotifymvvmhilt.presentation.dialogs.DialogUpdate
 import com.yerayyas.spotifymvvmhilt.presentation.model.Artist
 import com.yerayyas.spotifymvvmhilt.ui.theme.Black
 import com.yerayyas.spotifymvvmhilt.ui.theme.Purple40
@@ -44,6 +50,12 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 
     val artists = viewModel.artist.collectAsState()
     val player by viewModel.player.collectAsState()
+    val blockVersion by viewModel.blockVersion.collectAsState()
+
+    if (blockVersion) {
+        val context = LocalContext.current
+        DialogUpdate(context)
+    }
 
     Column(
         modifier = Modifier
@@ -62,21 +74,25 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 
         LazyRow {
             items(artists.value) {
-                ArtistItem(it) {}
+                ArtistItem(
+                    artist = it,
+                    onItemSelected = {viewModel.addPlayer(it)}
+                )
             }
         }
 
         Spacer(modifier = Modifier.weight(1f))
         if (player != null) {
-            Row(
-                modifier = Modifier
-                    .height(50.dp)
-                    .fillMaxWidth()
-                    .background(Purple40)
-            ) {
-                Text(text = player?.artist?.name.orEmpty())
+            player?.let {
+                PlayerComponent(
+                    player = it,
+                    onPlaySelected = { viewModel.onPlaySelected() },
+                    onCancelSelected = { viewModel.onCancelSelected() }
+
+                )
             }
         }
+        Spacer(modifier = Modifier.height(200.dp))
     }
 }
 
@@ -91,6 +107,22 @@ private fun ArtistItemPrev() {
     )
     ArtistItem(artist) {}
 
+}
+
+
+
+fun navigateToPlayStore(context: Context) {
+    val appPackage = context.packageName
+    try {
+        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$appPackage")))
+    } catch (e: Exception) {
+        context.startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://play.google.com/store/apps/details?id=$appPackage")
+            )
+        )
+    }
 }
 
 
