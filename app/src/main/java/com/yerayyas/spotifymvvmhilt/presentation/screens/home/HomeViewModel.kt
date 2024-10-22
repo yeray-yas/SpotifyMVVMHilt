@@ -1,10 +1,11 @@
-package com.yerayyas.spotifymvvmhilt.presentation.home
+package com.yerayyas.spotifymvvmhilt.presentation.screens.home
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
@@ -13,6 +14,7 @@ import com.google.firebase.ktx.Firebase
 import com.yerayyas.spotifymvvmhilt.domain.usecases.CanAccessToAppUseCase
 import com.yerayyas.spotifymvvmhilt.presentation.model.Artist
 import com.yerayyas.spotifymvvmhilt.presentation.model.Player
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -22,13 +24,14 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class HomeViewModel : ViewModel() {
-
-    private var canAccessToAppUseCase: CanAccessToAppUseCase = CanAccessToAppUseCase()
-
-    private val realtimeDatabase = Firebase.database
-    private var db: FirebaseFirestore = Firebase.firestore
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val canAccessToAppUseCase: CanAccessToAppUseCase,
+    private val realtimeDatabase: FirebaseDatabase,
+    private val db: FirebaseFirestore
+) : ViewModel() {
 
     private val _artist = MutableStateFlow<List<Artist>>(emptyList())
     val artist: StateFlow<List<Artist>> = _artist

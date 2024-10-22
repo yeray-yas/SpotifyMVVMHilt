@@ -1,40 +1,44 @@
 package com.yerayyas.spotifymvvmhilt.data
 
-import com.google.firebase.ktx.Firebase
+import android.content.Context
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
-import com.yerayyas.spotifymvvmhilt.SpotifyMVVMHiltApp.Companion.context
 import com.yerayyas.spotifymvvmhilt.utils.Constants.Companion.MIN_VERSION
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
-class Repository {
+class Repository @Inject constructor(
+    private val context: Context,
+    private val remoteConfig: FirebaseRemoteConfig
+) {
 
-    private val remoteConfig: FirebaseRemoteConfig = Firebase.remoteConfig.apply {
-        setConfigSettingsAsync(remoteConfigSettings { minimumFetchIntervalInSeconds = 3600L })
-        fetchAndActivate()
+    init {
+        setupRemoteConfig()
+    }
+
+    private fun setupRemoteConfig() {
+        remoteConfig.setConfigSettingsAsync(remoteConfigSettings { minimumFetchIntervalInSeconds = 3600L })
+        remoteConfig.fetchAndActivate()
     }
 
     fun getCurrentVersion(): List<Int> {
-        return try {
+        // Manejo de posibles excepciones con un bloque seguro
+        return runCatching {
             val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-            val versionName = packageInfo.versionName
-            val versionParts = versionName.split(".")
-            versionParts.map { it.toInt() }
-        } catch (e: Exception) {
-            listOf(0, 0, 0)
-        }
+            packageInfo.versionName.split(".").map { it.toInt() }
+        }.getOrDefault(listOf(0, 0, 0))
     }
 
     suspend fun getMinAllowedVersion(): List<Int> {
-        remoteConfig.fetch(0)
-        remoteConfig.activate().await()
-        val minVersion = remoteConfig.getString(MIN_VERSION)
-        return if (minVersion.isBlank()) {
-            listOf(0, 0, 0)
-        } else {
-            val versionParts = minVersion.split(".")
-            versionParts.map { it.toInt() }
+        // Usar una función de extensión para evitar código repetido
+        return remoteConfig.fetchAndActivateSuspend().let {
+            remoteConfig.getString(MIN_VERSION).takeIf { it.isNotBlank() }
+                ?.split(".")
+                ?.map { it.toInt() }
+                ?: listOf(0, 0, 0)
         }
     }
+
+    private suspend fun FirebaseRemoteConfig.fetchAndActivateSuspend(): Boolean =
+        fetch(0).await().let { activate().await() }
 }

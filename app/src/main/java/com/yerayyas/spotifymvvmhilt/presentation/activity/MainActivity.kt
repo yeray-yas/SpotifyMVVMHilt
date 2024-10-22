@@ -13,8 +13,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.yerayyas.spotifymvvmhilt.presentation.navigation.NavigationWrapper
 import com.yerayyas.spotifymvvmhilt.ui.theme.SpotifyMVVMHiltTheme
@@ -58,6 +56,5 @@ class MainActivity : ComponentActivity() {
             Log.i("OULLEA", "I am not logged yet")
         }
     }
-
 }
 

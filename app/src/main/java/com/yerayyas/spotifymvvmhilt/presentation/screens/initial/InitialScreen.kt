@@ -1,4 +1,4 @@
-package com.yerayyas.spotifymvvmhilt.presentation.initial
+package com.yerayyas.spotifymvvmhilt.presentation.screens.initial
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

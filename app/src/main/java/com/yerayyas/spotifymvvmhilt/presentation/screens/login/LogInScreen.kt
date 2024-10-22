@@ -1,4 +1,4 @@
-package com.yerayyas.spotifymvvmhilt.presentation.login
+package com.yerayyas.spotifymvvmhilt.presentation.screens.login
 
 import android.util.Log
 import androidx.compose.foundation.background

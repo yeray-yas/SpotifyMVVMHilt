@@ -1,4 +1,4 @@
-package com.yerayyas.spotifymvvmhilt.presentation.home
+package com.yerayyas.spotifymvvmhilt.presentation.screens.home
 
 import android.content.Context
 import android.content.Intent

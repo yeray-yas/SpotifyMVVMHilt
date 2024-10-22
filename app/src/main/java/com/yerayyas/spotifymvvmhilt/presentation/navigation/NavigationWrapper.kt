@@ -7,10 +7,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.yerayyas.spotifymvvmhilt.presentation.home.HomeScreen
-import com.yerayyas.spotifymvvmhilt.presentation.initial.InitialScreen
-import com.yerayyas.spotifymvvmhilt.presentation.login.LogInScreen
-import com.yerayyas.spotifymvvmhilt.presentation.signup.SignUpScreen
+import com.yerayyas.spotifymvvmhilt.presentation.screens.home.HomeScreen
+import com.yerayyas.spotifymvvmhilt.presentation.screens.initial.InitialScreen
+import com.yerayyas.spotifymvvmhilt.presentation.screens.login.LogInScreen
+import com.yerayyas.spotifymvvmhilt.presentation.screens.signup.SignUpScreen
 
 @Composable
 fun NavigationWrapper(
@@ -19,7 +19,7 @@ fun NavigationWrapper(
     modifier: Modifier
 ) {
                                                     //TODO change home to initial
-    NavHost(navController = navHostController, startDestination = "home") {
+    NavHost(navController = navHostController, startDestination = "initial") {
         composable("initial") {
             InitialScreen(
                 navigateToLogin = { navHostController.navigate("logIn") },

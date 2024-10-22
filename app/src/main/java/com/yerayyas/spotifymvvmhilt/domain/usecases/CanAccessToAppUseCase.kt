@@ -1,10 +1,9 @@
 package com.yerayyas.spotifymvvmhilt.domain.usecases
 
 import com.yerayyas.spotifymvvmhilt.data.Repository
+import javax.inject.Inject
 
-class CanAccessToAppUseCase {
-
-    val repository = Repository()
+class CanAccessToAppUseCase @Inject constructor(private val repository: Repository) {
 
     suspend operator fun invoke(): Boolean {
         val currentVersion = repository.getCurrentVersion()
@@ -16,6 +15,5 @@ class CanAccessToAppUseCase {
             }
         }
         return true
-
     }
 }

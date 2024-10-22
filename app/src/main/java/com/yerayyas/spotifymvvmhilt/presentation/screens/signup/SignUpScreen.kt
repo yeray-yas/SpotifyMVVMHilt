@@ -1,4 +1,4 @@
-package com.yerayyas.spotifymvvmhilt.presentation.signup
+package com.yerayyas.spotifymvvmhilt.presentation.screens.signup
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.Button
