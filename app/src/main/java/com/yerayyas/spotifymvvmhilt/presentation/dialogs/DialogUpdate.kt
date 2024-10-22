@@ -1,8 +1,6 @@
 package com.yerayyas.spotifymvvmhilt.presentation.dialogs
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
