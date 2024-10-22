@@ -15,24 +15,18 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 @InstallIn(ViewModelComponent::class)
 object AppModule {
 
-    // Provision of FirebaseRemoteConfig
     @Provides
-    fun provideFirebaseRemoteConfig(): FirebaseRemoteConfig {
-        return FirebaseRemoteConfig.getInstance()
-    }
+    fun provideFirebaseRemoteConfig(): FirebaseRemoteConfig =
+        FirebaseRemoteConfig.getInstance()
 
-    // Provision of repository with dependency inyection
     @Provides
     fun provideRepository(
-        @ApplicationContext context: Context, // Hilt inyecta el contexto automáticamente
+        @ApplicationContext context: Context,
         remoteConfig: FirebaseRemoteConfig
-    ): Repository {
-        return Repository(context, remoteConfig)
-    }
+    ): Repository = Repository(context, remoteConfig)
 
-    // Provisión del caso de uso que depende del repositorio
     @Provides
-    fun provideCanAccessToAppUseCase(repository: Repository): CanAccessToAppUseCase {
-        return CanAccessToAppUseCase(repository)
-    }
+    fun provideCanAccessToAppUseCase(repository: Repository): CanAccessToAppUseCase =
+        CanAccessToAppUseCase(repository)
 }
+

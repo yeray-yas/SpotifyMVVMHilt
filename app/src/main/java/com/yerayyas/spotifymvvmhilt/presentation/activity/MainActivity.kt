@@ -29,9 +29,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         auth = Firebase.auth
-
         setContent {
-            // A surface container using the 'background' color from the theme
             navHostController = rememberNavController()
             SpotifyMVVMHiltTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->

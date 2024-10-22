@@ -9,11 +9,8 @@ class CanAccessToAppUseCase @Inject constructor(private val repository: Reposito
         val currentVersion = repository.getCurrentVersion()
         val minAllowedVersion = repository.getMinAllowedVersion()
 
-        for ((currentVersionPart, minVersionPart) in currentVersion.zip(minAllowedVersion)) {
-            if (currentVersionPart != minVersionPart) {
-                return currentVersionPart > minVersionPart
-            }
+        return currentVersion.zip(minAllowedVersion).all { (current, min) ->
+            current >= min
         }
-        return true
     }
 }
