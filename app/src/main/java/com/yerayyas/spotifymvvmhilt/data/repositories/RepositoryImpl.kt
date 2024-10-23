@@ -1,31 +1,27 @@
-package com.yerayyas.spotifymvvmhilt.data
+package com.yerayyas.spotifymvvmhilt.data.repositories
 
 import android.content.Context
+import com.yerayyas.spotifymvvmhilt.data.AppVersionProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class Repository @Inject constructor(
+class RepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val appVersionProvider: AppVersionProvider
-) {
+) : Repository {
 
     init {
-        setupRemoteConfig()
-    }
-
-    private fun setupRemoteConfig() {
         appVersionProvider.setupRemoteConfig()
     }
 
-    fun getCurrentVersion(): List<Int> {
+    override fun getCurrentVersion(): List<Int> {
         return runCatching {
             val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
             packageInfo.versionName.split(".").map { it.toInt() }
         }.getOrDefault(listOf(0, 0, 0))
     }
 
-    suspend fun getMinAllowedVersion(): List<Int> {
+    override suspend fun getMinAllowedVersion(): List<Int> {
         return appVersionProvider.getMinAllowedVersion()
     }
 }
-

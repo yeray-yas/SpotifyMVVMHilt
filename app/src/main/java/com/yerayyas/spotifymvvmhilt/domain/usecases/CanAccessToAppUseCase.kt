@@ -1,6 +1,6 @@
 package com.yerayyas.spotifymvvmhilt.domain.usecases
 
-import com.yerayyas.spotifymvvmhilt.data.Repository
+import com.yerayyas.spotifymvvmhilt.data.repositories.Repository
 import javax.inject.Inject
 
 class CanAccessToAppUseCase @Inject constructor(private val repository: Repository) {

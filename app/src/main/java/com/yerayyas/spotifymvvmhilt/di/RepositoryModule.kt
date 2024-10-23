@@ -3,7 +3,8 @@ package com.yerayyas.spotifymvvmhilt.di
 import android.content.Context
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.yerayyas.spotifymvvmhilt.data.AppVersionProvider
-import com.yerayyas.spotifymvvmhilt.data.Repository
+import com.yerayyas.spotifymvvmhilt.data.repositories.Repository
+import com.yerayyas.spotifymvvmhilt.data.repositories.RepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,7 +28,7 @@ object RepositoryModule {
         @ApplicationContext context: Context,
         appVersionProvider: AppVersionProvider
     ): Repository {
-        return Repository(context, appVersionProvider)
+        return RepositoryImpl(context, appVersionProvider)
     }
 }
 
