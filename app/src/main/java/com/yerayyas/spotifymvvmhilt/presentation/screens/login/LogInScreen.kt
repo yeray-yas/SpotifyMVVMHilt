@@ -2,6 +2,7 @@ package com.yerayyas.spotifymvvmhilt.presentation.screens.login
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,7 +32,7 @@ import com.yerayyas.spotifymvvmhilt.R
 import com.yerayyas.spotifymvvmhilt.ui.theme.Black
 
 @Composable
-fun LogInScreen(auth: FirebaseAuth, navigateToHome: () -> Unit) {
+fun LogInScreen(auth: FirebaseAuth, navigateToHome: () -> Unit, onBack: () -> Unit) {
     var email by remember {
         mutableStateOf("")
     }
@@ -53,6 +54,9 @@ fun LogInScreen(auth: FirebaseAuth, navigateToHome: () -> Unit) {
                 modifier = Modifier
                     .padding(vertical = 24.dp)
                     .size(24.dp)
+                    .clickable {
+                        onBack()
+                    }
             )
             Spacer(modifier = Modifier.weight(1f))
         }

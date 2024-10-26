@@ -25,7 +25,11 @@ fun NavigationWrapper(
             )
         }
         composable("logIn") {
-            LogInScreen(auth) { navHostController.navigate("home") }
+            LogInScreen(
+                auth,
+                navigateToHome = { navHostController.navigate("home") },
+                onBack = { navHostController.popBackStack() }
+            )
         }
         composable("signUp") {
             SignUpScreen(auth)
