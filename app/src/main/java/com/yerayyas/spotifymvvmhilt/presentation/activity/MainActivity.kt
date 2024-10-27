@@ -36,7 +36,8 @@ class MainActivity : ComponentActivity() {
                     NavigationWrapper(
                         navHostController,
                         auth,
-                        modifier = Modifier.padding(innerPadding)
+                        modifier = Modifier.padding(innerPadding),
+                        context = applicationContext
                     )
                 }
             }

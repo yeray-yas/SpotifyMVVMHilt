@@ -1,9 +1,12 @@
 package com.yerayyas.spotifymvvmhilt.presentation.connectivity
 
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.StateFlow
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.viewModelScope
 import com.yerayyas.spotifymvvmhilt.data.connectivity.ConnectionStatus
 import com.yerayyas.spotifymvvmhilt.domain.usecases.GetConnectionStatusUseCase
@@ -14,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ConnectivityViewModel @Inject constructor(
     private val getConnectionStatusUseCase: GetConnectionStatusUseCase
-) : ViewModel() {
+) : ViewModel(), LifecycleObserver {
 
     val connectionStatus: StateFlow<ConnectionStatus> = getConnectionStatusUseCase.execute()
 
@@ -29,10 +32,14 @@ class ConnectivityViewModel @Inject constructor(
         }
     }
 
+    // Método para iniciar la monitorización
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun startListening() {
         getConnectionStatusUseCase.repository.startListening()
     }
 
+    // Método para detener la monitorización
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun stopListening() {
         getConnectionStatusUseCase.repository.stopListening()
     }

@@ -3,116 +3,59 @@ package com.yerayyas.spotifymvvmhilt.presentation.screens.home
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.yerayyas.spotifymvvmhilt.presentation.components.ArtistItem
+import com.yerayyas.spotifymvvmhilt.presentation.components.ArtistsList
+import com.yerayyas.spotifymvvmhilt.presentation.components.HeaderTitle
 import com.yerayyas.spotifymvvmhilt.presentation.components.PlayerComponent
+import com.yerayyas.spotifymvvmhilt.presentation.components.ShowToast
 import com.yerayyas.spotifymvvmhilt.presentation.connectivity.ConnectivityViewModel
+import com.yerayyas.spotifymvvmhilt.presentation.connectivity.ManageNetworkListening
 import com.yerayyas.spotifymvvmhilt.presentation.dialogs.DialogUpdate
-import com.yerayyas.spotifymvvmhilt.presentation.model.Artist
 import com.yerayyas.spotifymvvmhilt.ui.theme.Black
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 @Composable
 fun HomeScreen(
+    @ApplicationContext context: Context,
     viewModel: HomeViewModel = hiltViewModel(),
     connectivityViewModel: ConnectivityViewModel = hiltViewModel()
 ) {
-
     val artists = viewModel.artist.collectAsState()
     val player by viewModel.player.collectAsState()
     val blockVersion by viewModel.blockVersion.collectAsState()
 
     if (blockVersion) {
-        val context = LocalContext.current
         DialogUpdate(context)
     }
 
-    // Inicia la escucha del estado de la conexión
-    LaunchedEffect(Unit) {
-        connectivityViewModel.startListening()
-    }
+    ManageNetworkListening(connectivityViewModel)
 
-    // Observa el estado de la conexión
-    val connectionStatus by connectivityViewModel.connectionStatus.collectAsState()
-    val toastMessage by connectivityViewModel.toastMessage.observeAsState() // Observa el mensaje de Toast
-
-    // Muestra el Toast si hay un mensaje
-    toastMessage?.let { message ->
-        val context = LocalContext.current
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-        // Limpia el mensaje para no mostrarlo de nuevo
-        connectivityViewModel.clearToastMessage() // Método para limpiar el mensaje
-    }
+    ShowToast(context, connectivityViewModel)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Black)
     ) {
-        Text(
-            text = "Popular Artists",
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
-            fontSize = 30.sp,
-            modifier = Modifier.padding(16.dp)
-        )
-        LazyRow {
-            items(artists.value) {
-                ArtistItem(
-                    artist = it,
-                    onItemSelected = { viewModel.addPlayer(it) }
-                )
-            }
+        HeaderTitle()
+        ArtistsList(artists.value) { artist ->
+            viewModel.addPlayer(artist)
         }
         Spacer(modifier = Modifier.weight(1f))
-        if (player != null) {
-            player?.let {
-                PlayerComponent(
-                    player = it,
-                    onPlaySelected = { viewModel.onPlaySelected() },
-                    onCancelSelected = { viewModel.onCancelSelected() }
-
-                )
-            }
-        }
+        player?.let { PlayerComponent(it, viewModel::onPlaySelected, viewModel::onCancelSelected) }
         Spacer(modifier = Modifier.height(200.dp))
     }
 }
-
-
-@Preview
-@Composable
-private fun ArtistItemPrev() {
-    val artist = Artist(
-        name = "Pepe",
-        "El mejor",
-        "https://images.dog.ceo//breeds//retriever-curly//n02099429_121.jpg"
-    )
-    ArtistItem(artist) {}
-
-}
-
 
 fun navigateToPlayStore(context: Context) {
     val appPackage = context.packageName

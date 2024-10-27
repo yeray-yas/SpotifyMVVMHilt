@@ -1,7 +1,9 @@
 package com.yerayyas.spotifymvvmhilt.presentation.navigation
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -12,14 +14,15 @@ import com.yerayyas.spotifymvvmhilt.presentation.screens.home.HomeScreen
 import com.yerayyas.spotifymvvmhilt.presentation.screens.initial.InitialScreen
 import com.yerayyas.spotifymvvmhilt.presentation.screens.login.LogInScreen
 import com.yerayyas.spotifymvvmhilt.presentation.screens.signup.SignUpScreen
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 @Composable
 fun NavigationWrapper(
     navHostController: NavHostController,
     auth: FirebaseAuth,
-    modifier: Modifier
+    modifier: Modifier,
+    @ApplicationContext context: Context
 ) {
-    val connectivityViewModel: ConnectivityViewModel = hiltViewModel()
     NavHost(navController = navHostController, startDestination = "home") {
         composable("initial") {
             InitialScreen(
@@ -38,7 +41,7 @@ fun NavigationWrapper(
             SignUpScreen(auth)
         }
         composable("home") {
-            HomeScreen()
+            HomeScreen(context)
         }
     }
 }

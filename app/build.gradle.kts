@@ -64,6 +64,7 @@ android {
 
 dependencies {
 
+    // BASIC DEPENDENCIES
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -83,6 +84,7 @@ dependencies {
     implementation(libs.firebase.realtime)
     implementation(libs.firebase.config)
 
+    // NAVIGATION COMPOSE
     implementation(libs.androidx.navigation.compose)
 
     //HILT
@@ -93,7 +95,7 @@ dependencies {
     // COIL
     implementation(libs.coil)
 
-
+    // TESTS
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
