@@ -3,6 +3,7 @@ package com.yerayyas.spotifymvvmhilt.presentation.screens.home
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,8 +14,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -25,12 +28,16 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.yerayyas.spotifymvvmhilt.presentation.components.ArtistItem
 import com.yerayyas.spotifymvvmhilt.presentation.components.PlayerComponent
+import com.yerayyas.spotifymvvmhilt.presentation.connectivity.ConnectivityViewModel
 import com.yerayyas.spotifymvvmhilt.presentation.dialogs.DialogUpdate
 import com.yerayyas.spotifymvvmhilt.presentation.model.Artist
 import com.yerayyas.spotifymvvmhilt.ui.theme.Black
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
+fun HomeScreen(
+    viewModel: HomeViewModel = hiltViewModel(),
+    connectivityViewModel: ConnectivityViewModel = hiltViewModel()
+) {
 
     val artists = viewModel.artist.collectAsState()
     val player by viewModel.player.collectAsState()
@@ -39,6 +46,23 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     if (blockVersion) {
         val context = LocalContext.current
         DialogUpdate(context)
+    }
+
+    // Inicia la escucha del estado de la conexión
+    LaunchedEffect(Unit) {
+        connectivityViewModel.startListening()
+    }
+
+    // Observa el estado de la conexión
+    val connectionStatus by connectivityViewModel.connectionStatus.collectAsState()
+    val toastMessage by connectivityViewModel.toastMessage.observeAsState() // Observa el mensaje de Toast
+
+    // Muestra el Toast si hay un mensaje
+    toastMessage?.let { message ->
+        val context = LocalContext.current
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        // Limpia el mensaje para no mostrarlo de nuevo
+        connectivityViewModel.clearToastMessage() // Método para limpiar el mensaje
     }
 
     Column(
@@ -57,7 +81,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             items(artists.value) {
                 ArtistItem(
                     artist = it,
-                    onItemSelected = {viewModel.addPlayer(it)}
+                    onItemSelected = { viewModel.addPlayer(it) }
                 )
             }
         }
@@ -90,11 +114,15 @@ private fun ArtistItemPrev() {
 }
 
 
-
 fun navigateToPlayStore(context: Context) {
     val appPackage = context.packageName
     try {
-        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$appPackage")))
+        context.startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("market://details?id=$appPackage")
+            )
+        )
     } catch (e: Exception) {
         context.startActivity(
             Intent(
