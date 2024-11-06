@@ -5,6 +5,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.yerayyas.spotifymvvmhilt.data.AppVersionProvider
 import com.yerayyas.spotifymvvmhilt.data.repositories.Repository
 import com.yerayyas.spotifymvvmhilt.data.repositories.RepositoryImpl
+import com.yerayyas.spotifymvvmhilt.data.repositories.connectivity.ConnectivityRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,8 +19,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideAppVersionProvider(remoteConfig: FirebaseRemoteConfig): AppVersionProvider {
-        return AppVersionProvider(remoteConfig)
+    fun provideAppVersionProvider(remoteConfig: FirebaseRemoteConfig, connectivityRepository: ConnectivityRepository): AppVersionProvider {
+        return AppVersionProvider(remoteConfig, connectivityRepository)
     }
 
     @Provides

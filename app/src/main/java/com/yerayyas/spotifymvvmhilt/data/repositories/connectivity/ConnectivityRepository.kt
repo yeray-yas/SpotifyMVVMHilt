@@ -9,4 +9,3 @@ interface ConnectivityRepository {
     fun stopListening()
 }
 
-

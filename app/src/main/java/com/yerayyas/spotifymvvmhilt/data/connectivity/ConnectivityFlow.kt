@@ -6,8 +6,6 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.provider.Settings
-import com.yerayyas.spotifymvvmhilt.data.connectivity.ConnectionStatus
-import com.yerayyas.spotifymvvmhilt.data.connectivity.ConnectionType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -27,7 +25,7 @@ class ConnectivityFlow(private val connectivityManager: ConnectivityManager, pri
     private fun startPeriodicConnectionCheck() {
         CoroutineScope(Dispatchers.IO).launch {
             while (true) {
-                delay(2000) // Every 2 seconds
+                delay(2000)
                 checkInitialConnectionStatus()
             }
         }
@@ -39,10 +37,9 @@ class ConnectivityFlow(private val connectivityManager: ConnectivityManager, pri
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
                 if (!isAirplaneModeOn()) {
-                    // Actualizar de inmediato el tipo de conexión cuando hay un cambio
                     val connectionType = getConnectionType()
                     _connectionStatus.value = if (connectionType == ConnectionType.UNKNOWN) {
-                        ConnectionStatus.Disconnected // Sin conexión reconocida
+                        ConnectionStatus.Disconnected
                     } else {
                         ConnectionStatus.Connected(connectionType)
                     }

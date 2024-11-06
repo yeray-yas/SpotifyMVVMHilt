@@ -22,6 +22,11 @@ class RepositoryImpl @Inject constructor(
     }
 
     override suspend fun getMinAllowedVersion(): List<Int> {
-        return appVersionProvider.getMinAllowedVersion()
+        return runCatching {
+            appVersionProvider.getMinAllowedVersion()
+        }.getOrElse {
+            listOf(0, 0, 0)
+        }
     }
 }
+

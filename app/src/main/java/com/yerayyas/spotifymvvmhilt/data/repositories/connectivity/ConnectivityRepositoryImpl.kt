@@ -13,4 +13,3 @@ class ConnectivityRepositoryImpl @Inject constructor(
     override fun startListening() = connectivityFlow.startListening()
     override fun stopListening() = connectivityFlow.stopListening()
 }
-

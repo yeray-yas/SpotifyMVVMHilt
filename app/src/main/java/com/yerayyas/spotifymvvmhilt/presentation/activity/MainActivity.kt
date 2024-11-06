@@ -1,7 +1,6 @@
 package com.yerayyas.spotifymvvmhilt.presentation.activity
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -24,36 +23,34 @@ class MainActivity : ComponentActivity() {
     private lateinit var navHostController: NavHostController
     private lateinit var auth: FirebaseAuth
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         auth = Firebase.auth
         setContent {
             navHostController = rememberNavController()
+
+            val currentUser = auth.currentUser
+            val startDestination = if (currentUser != null) {
+                "home"
+            } else {
+                "initial"
+            }
+
             SpotifyMVVMHiltTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     NavigationWrapper(
                         navHostController,
                         auth,
                         modifier = Modifier.padding(innerPadding),
-                        context = applicationContext
+                        context = applicationContext,
+                        startDestination = startDestination
                     )
                 }
             }
         }
     }
-
-    override fun onStart() {
-        super.onStart()
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            // Navigate to home screen
-            Log.i("OULLEA", "I am logged")
-            //auth.signOut()
-        }else{
-            Log.i("OULLEA", "I am not logged yet")
-        }
-    }
 }
+
+
 

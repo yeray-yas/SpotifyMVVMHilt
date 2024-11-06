@@ -2,7 +2,7 @@ package com.yerayyas.spotifymvvmhilt.data.connectivity
 
 sealed class ConnectionStatus {
     data object Disconnected : ConnectionStatus()
-    data object AirplaneMode : ConnectionStatus() // Nuevo estado
+    data object AirplaneMode : ConnectionStatus()
     data class Connected(val connectionType: ConnectionType) : ConnectionStatus()
 }
 

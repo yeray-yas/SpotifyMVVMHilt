@@ -1,43 +1,48 @@
 package com.yerayyas.spotifymvvmhilt.presentation.screens.signup
 
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.material3.Button
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import com.google.firebase.auth.FirebaseAuth
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.google.firebase.auth.FirebaseAuth
 import com.yerayyas.spotifymvvmhilt.R
 import com.yerayyas.spotifymvvmhilt.ui.theme.Black
+import com.yerayyas.spotifymvvmhilt.utils.showToast
 
 @Composable
-fun SignUpScreen(auth: FirebaseAuth) {
-    var email by remember {
-        mutableStateOf("")
-    }
-    var password by remember {
-        mutableStateOf("")
-    }
+fun SignUpScreen(auth: FirebaseAuth, navHostController: NavHostController) {
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    val context = LocalContext.current
+
+    val emailPattern = "[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"
+    val upperCasePattern = ".*[A-Z].*"
+    val atLeastOneNumberPattern = ".*\\d.*"
+    val atLeastOneSpecialCharacterPattern = ".*[!@#$%^&*()_,.?\":{}|<>].*"
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -79,19 +84,28 @@ fun SignUpScreen(auth: FirebaseAuth) {
             onValueChange = { password = it },
             modifier = Modifier.fillMaxWidth()
         )
-        Spacer(
-            modifier = Modifier
-                .height(48.dp)
-        )
+        Spacer(modifier = Modifier.height(48.dp))
         Button(onClick = {
-            auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    // Registered
-                    Log.i("OULLEA", "Register OK ")
+            when {
+                email.isBlank() || password.isBlank() -> showToast(context, "Please fill in both email and password")
+                !email.matches(Regex(emailPattern)) -> showToast(context, "Please enter a valid email address")
+                password.length < 8 -> showToast(context, "Password must be at least 8 characters")
+                !password.matches(Regex(upperCasePattern)) -> showToast(context, "Password must contain at least one uppercase letter")
+                !password.matches(Regex(atLeastOneNumberPattern)) -> showToast(context, "Password must contain at least one number")
+                !password.matches(Regex(atLeastOneSpecialCharacterPattern)) -> showToast(context, "Password must contain at least one special character")
+                else -> {
+                    auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            showToast(context, "Registration successful")
 
-                } else {
-                    // Error
-                    Log.i("OULLEA", "Register KO ")
+                            val user = auth.currentUser
+                            if (user != null) {
+                                navHostController.navigate("home")
+                            }
+                        } else {
+                            showToast(context, "Registration failed: ${task.exception?.message}")
+                        }
+                    }
                 }
             }
         }) {

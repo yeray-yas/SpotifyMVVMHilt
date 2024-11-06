@@ -3,6 +3,7 @@ package com.yerayyas.spotifymvvmhilt.presentation.screens.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -25,7 +26,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val canAccessToAppUseCase: CanAccessToAppUseCase,
     private val realtimeDatabase: FirebaseDatabase,
-    private val db: FirebaseFirestore
+    private val db: FirebaseFirestore,
+    private val auth: FirebaseAuth
 ) : ViewModel() {
 
     private val _artist = MutableStateFlow<List<Artist>>(emptyList())
@@ -42,6 +44,16 @@ class HomeViewModel @Inject constructor(
             checkUserVersion()
             getArtists()
             getPlayer()
+        }
+    }
+
+    fun signOut() {
+        viewModelScope.launch {
+            try {
+                auth.signOut()
+            } catch (e: Exception) {
+                println("Error closing session: ${e.message}")
+            }
         }
     }
 
@@ -75,7 +87,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun collectPlayer(): Flow<DataSnapshot> = callbackFlow {
-        val playerRef = realtimeDatabase.reference.child("player") // Defining the reference
+        val playerRef = realtimeDatabase.reference.child("player")
 
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {

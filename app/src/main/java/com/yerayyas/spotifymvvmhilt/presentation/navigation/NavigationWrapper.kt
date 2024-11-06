@@ -3,13 +3,10 @@ package com.yerayyas.spotifymvvmhilt.presentation.navigation
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.google.firebase.auth.FirebaseAuth
-import com.yerayyas.spotifymvvmhilt.presentation.connectivity.ConnectivityViewModel
 import com.yerayyas.spotifymvvmhilt.presentation.screens.home.HomeScreen
 import com.yerayyas.spotifymvvmhilt.presentation.screens.initial.InitialScreen
 import com.yerayyas.spotifymvvmhilt.presentation.screens.login.LogInScreen
@@ -21,9 +18,10 @@ fun NavigationWrapper(
     navHostController: NavHostController,
     auth: FirebaseAuth,
     modifier: Modifier,
-    @ApplicationContext context: Context
+    @ApplicationContext context: Context,
+    startDestination: String
 ) {
-    NavHost(navController = navHostController, startDestination = "home") {
+    NavHost(navController = navHostController, startDestination = startDestination) {
         composable("initial") {
             InitialScreen(
                 navigateToLogin = { navHostController.navigate("logIn") },
@@ -38,10 +36,10 @@ fun NavigationWrapper(
             )
         }
         composable("signUp") {
-            SignUpScreen(auth)
+            SignUpScreen(auth, navHostController)
         }
         composable("home") {
-            HomeScreen(context)
+            HomeScreen(context, navHostController)
         }
     }
 }

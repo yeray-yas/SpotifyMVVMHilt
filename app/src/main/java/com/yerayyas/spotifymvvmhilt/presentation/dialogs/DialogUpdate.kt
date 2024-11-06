@@ -59,5 +59,3 @@ fun DialogUpdate(context: Context) {
         }
     }
 }
-
-

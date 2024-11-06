@@ -1,5 +1,6 @@
 package com.yerayyas.spotifymvvmhilt.di
 
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
@@ -26,4 +27,7 @@ object FirebaseModule {
     fun provideFirebaseFirestore(): FirebaseFirestore {
         return Firebase.firestore
     }
+
+    @Provides
+    fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 }

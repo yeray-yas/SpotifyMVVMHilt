@@ -19,7 +19,7 @@ class ConnectivityViewModel @Inject constructor(
     private val getConnectionStatusUseCase: GetConnectionStatusUseCase
 ) : ViewModel(), LifecycleObserver {
 
-    val connectionStatus: StateFlow<ConnectionStatus> = getConnectionStatusUseCase.execute()
+    private val connectionStatus: StateFlow<ConnectionStatus> = getConnectionStatusUseCase.execute()
 
     private val _toastMessage = MutableLiveData<String?>()
     val toastMessage: LiveData<String?> get() = _toastMessage
@@ -32,13 +32,11 @@ class ConnectivityViewModel @Inject constructor(
         }
     }
 
-    // Método para iniciar la monitorización
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun startListening() {
         getConnectionStatusUseCase.repository.startListening()
     }
 
-    // Método para detener la monitorización
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun stopListening() {
         getConnectionStatusUseCase.repository.stopListening()

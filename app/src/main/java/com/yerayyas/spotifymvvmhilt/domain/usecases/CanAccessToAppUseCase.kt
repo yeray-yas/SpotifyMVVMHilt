@@ -14,3 +14,4 @@ class CanAccessToAppUseCase @Inject constructor(private val repository: Reposito
         }
     }
 }
+
