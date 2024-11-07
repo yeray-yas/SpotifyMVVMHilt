@@ -5,32 +5,16 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import android.os.Build
 import android.provider.Settings
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import androidx.annotation.RequiresApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 
 class ConnectivityFlow(private val connectivityManager: ConnectivityManager, private val context: Context) {
 
     private val _connectionStatus = MutableStateFlow<ConnectionStatus>(ConnectionStatus.Disconnected)
     val connectionStatus: StateFlow<ConnectionStatus> = _connectionStatus
-
-    init {
-        startPeriodicConnectionCheck()
-    }
-
-    private fun startPeriodicConnectionCheck() {
-        CoroutineScope(Dispatchers.IO).launch {
-            while (true) {
-                delay(2000)
-                checkInitialConnectionStatus()
-            }
-        }
-    }
-
 
     private val networkCallbackInstance =
         object : ConnectivityManager.NetworkCallback() {
@@ -54,7 +38,18 @@ class ConnectivityFlow(private val connectivityManager: ConnectivityManager, pri
                     _connectionStatus.value = ConnectionStatus.Disconnected
                 }
             }
+
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun onUnavailable() {
+                super.onUnavailable()
+                // También podemos manejar el caso de red no disponible, si es necesario
+                _connectionStatus.value = ConnectionStatus.Disconnected
+            }
         }
+
+    init {
+        startListening()
+    }
 
     fun startListening() {
         val builder = NetworkRequest.Builder()

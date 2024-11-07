@@ -1,4 +1,4 @@
-package com.yerayyas.spotifymvvmhilt.presentation.connectivity
+package com.yerayyas.spotifymvvmhilt.presentation.viewmodels
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver

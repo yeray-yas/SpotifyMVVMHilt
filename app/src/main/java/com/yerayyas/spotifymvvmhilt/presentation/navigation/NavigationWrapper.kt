@@ -31,12 +31,16 @@ fun NavigationWrapper(
         composable("logIn") {
             LogInScreen(
                 auth,
-                navigateToHome = { navHostController.navigate("home") },
+                navigateToHome = {
+                    navHostController.navigate("home") {
+                        popUpTo("logIn") { inclusive = true }
+                    }
+                },
                 onBack = { navHostController.popBackStack() }
             )
         }
         composable("signUp") {
-            SignUpScreen(auth, navHostController)
+            SignUpScreen(navHostController)
         }
         composable("home") {
             HomeScreen(context, navHostController)

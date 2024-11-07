@@ -1,9 +1,11 @@
 package com.yerayyas.spotifymvvmhilt.presentation.screens.home
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,9 +25,10 @@ import com.yerayyas.spotifymvvmhilt.presentation.components.ArtistsList
 import com.yerayyas.spotifymvvmhilt.presentation.components.HeaderTitle
 import com.yerayyas.spotifymvvmhilt.presentation.components.PlayerComponent
 import com.yerayyas.spotifymvvmhilt.presentation.components.ShowToast
-import com.yerayyas.spotifymvvmhilt.presentation.connectivity.ConnectivityViewModel
+import com.yerayyas.spotifymvvmhilt.presentation.viewmodels.ConnectivityViewModel
 import com.yerayyas.spotifymvvmhilt.presentation.connectivity.ManageNetworkListening
 import com.yerayyas.spotifymvvmhilt.presentation.dialogs.DialogUpdate
+import com.yerayyas.spotifymvvmhilt.presentation.viewmodels.HomeViewModel
 import com.yerayyas.spotifymvvmhilt.ui.theme.Black
 import dagger.hilt.android.qualifiers.ApplicationContext
 
@@ -42,6 +45,10 @@ fun HomeScreen(
 
     if (blockVersion) {
         DialogUpdate(context)
+    }
+
+    BackHandler {
+        (context as? Activity)?.finish()
     }
 
     ManageNetworkListening(connectivityViewModel)

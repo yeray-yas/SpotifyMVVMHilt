@@ -5,7 +5,7 @@ import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import com.yerayyas.spotifymvvmhilt.presentation.connectivity.ConnectivityViewModel
+import com.yerayyas.spotifymvvmhilt.presentation.viewmodels.ConnectivityViewModel
 
 @Composable
 fun ShowToast(context: Context, connectivityViewModel: ConnectivityViewModel) {

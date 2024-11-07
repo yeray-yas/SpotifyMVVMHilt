@@ -6,6 +6,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import com.yerayyas.spotifymvvmhilt.presentation.viewmodels.ConnectivityViewModel
 
 @Composable
 fun ManageNetworkListening(connectivityViewModel: ConnectivityViewModel) {

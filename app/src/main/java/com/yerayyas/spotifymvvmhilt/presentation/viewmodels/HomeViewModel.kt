@@ -1,4 +1,4 @@
-package com.yerayyas.spotifymvvmhilt.presentation.screens.home
+package com.yerayyas.spotifymvvmhilt.presentation.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

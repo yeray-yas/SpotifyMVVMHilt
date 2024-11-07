@@ -3,54 +3,45 @@ package com.yerayyas.spotifymvvmhilt.presentation.activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.yerayyas.spotifymvvmhilt.presentation.navigation.NavigationWrapper
+import com.yerayyas.spotifymvvmhilt.presentation.viewmodels.AuthViewModel
 import com.yerayyas.spotifymvvmhilt.ui.theme.SpotifyMVVMHiltTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private lateinit var navHostController: NavHostController
-    private lateinit var auth: FirebaseAuth
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        auth = Firebase.auth
         setContent {
-            navHostController = rememberNavController()
+            val navHostController = rememberNavController()
+            val startDestination by authViewModel.startDestination.collectAsState()
 
-            val currentUser = auth.currentUser
-            val startDestination = if (currentUser != null) {
-                "home"
-            } else {
-                "initial"
-            }
-
-            SpotifyMVVMHiltTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    NavigationWrapper(
-                        navHostController,
-                        auth,
-                        modifier = Modifier.padding(innerPadding),
-                        context = applicationContext,
-                        startDestination = startDestination
-                    )
+                SpotifyMVVMHiltTheme {
+                    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                        NavigationWrapper(
+                            navHostController = navHostController,
+                            auth = authViewModel.getAuth(),
+                            modifier = Modifier.padding(innerPadding),
+                            context = this@MainActivity,
+                            startDestination = startDestination
+                        )
+                    }
                 }
-            }
         }
     }
 }
+
 
 
 
