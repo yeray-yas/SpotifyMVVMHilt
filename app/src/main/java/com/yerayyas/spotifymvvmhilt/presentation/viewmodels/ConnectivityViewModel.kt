@@ -1,23 +1,23 @@
 package com.yerayyas.spotifymvvmhilt.presentation.viewmodels
 
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.StateFlow
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yerayyas.spotifymvvmhilt.data.connectivity.ConnectionStatus
 import com.yerayyas.spotifymvvmhilt.domain.usecases.GetConnectionStatusUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ConnectivityViewModel @Inject constructor(
     private val getConnectionStatusUseCase: GetConnectionStatusUseCase
-) : ViewModel(), LifecycleObserver {
+) : ViewModel(), LifecycleEventObserver {
 
     private val connectionStatus: StateFlow<ConnectionStatus> = getConnectionStatusUseCase.execute()
 
@@ -32,12 +32,18 @@ class ConnectivityViewModel @Inject constructor(
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        when (event) {
+            Lifecycle.Event.ON_START -> startListening()
+            Lifecycle.Event.ON_STOP -> stopListening()
+            else -> {}
+        }
+    }
+
     fun startListening() {
         getConnectionStatusUseCase.repository.startListening()
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun stopListening() {
         getConnectionStatusUseCase.repository.stopListening()
     }

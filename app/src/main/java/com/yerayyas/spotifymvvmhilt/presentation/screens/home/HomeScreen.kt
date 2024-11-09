@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -25,9 +27,8 @@ import com.yerayyas.spotifymvvmhilt.presentation.components.ArtistsList
 import com.yerayyas.spotifymvvmhilt.presentation.components.HeaderTitle
 import com.yerayyas.spotifymvvmhilt.presentation.components.PlayerComponent
 import com.yerayyas.spotifymvvmhilt.presentation.components.ShowToast
-import com.yerayyas.spotifymvvmhilt.presentation.viewmodels.ConnectivityViewModel
-import com.yerayyas.spotifymvvmhilt.presentation.connectivity.ManageNetworkListening
 import com.yerayyas.spotifymvvmhilt.presentation.dialogs.DialogUpdate
+import com.yerayyas.spotifymvvmhilt.presentation.viewmodels.ConnectivityViewModel
 import com.yerayyas.spotifymvvmhilt.presentation.viewmodels.HomeViewModel
 import com.yerayyas.spotifymvvmhilt.ui.theme.Black
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -51,7 +52,14 @@ fun HomeScreen(
         (context as? Activity)?.finish()
     }
 
-    ManageNetworkListening(connectivityViewModel)
+    LaunchedEffect(Unit) {
+        connectivityViewModel.startListening()
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            connectivityViewModel.stopListening()
+        }
+    }
 
     ShowToast(context, connectivityViewModel)
 
@@ -84,6 +92,7 @@ fun HomeScreen(
         ) {
             Text("Close session")
         }
+
         Spacer(modifier = Modifier.weight(1f))
     }
 }
@@ -106,6 +115,7 @@ fun navigateToPlayStore(context: Context) {
         )
     }
 }
+
 
 
 /*
