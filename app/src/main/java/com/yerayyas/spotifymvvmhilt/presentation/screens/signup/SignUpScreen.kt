@@ -1,6 +1,5 @@
 package com.yerayyas.spotifymvvmhilt.presentation.screens.signup
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -17,7 +16,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,13 +40,6 @@ fun SignUpScreen(navHostController: NavHostController, signUpViewModel: SignUpVi
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val signUpState = signUpViewModel.uiState.value
-
-    LaunchedEffect(signUpState) {
-        Log.d("SignUpScreen", "Estado de SignUpState cambiado: $signUpState")
-        if (signUpState is SignUpState.Error) {
-            Log.d("SignUpScreen", "Mensaje de error capturado: ${signUpState.message}")
-        }
-    }
 
     Column(
         modifier = Modifier

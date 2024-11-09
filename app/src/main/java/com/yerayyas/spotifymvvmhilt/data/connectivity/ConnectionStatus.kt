@@ -9,7 +9,7 @@ sealed class ConnectionStatus {
 sealed class ConnectionType {
     data object WIFI : ConnectionType()
     data object MOBILE : ConnectionType()
-    data object UNKNOWN : ConnectionType()
+    data object DISCONNECTED : ConnectionType()
 }
 
 

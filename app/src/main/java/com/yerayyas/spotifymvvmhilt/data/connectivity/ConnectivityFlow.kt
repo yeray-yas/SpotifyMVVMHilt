@@ -5,16 +5,32 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
-import android.os.Build
 import android.provider.Settings
-import androidx.annotation.RequiresApi
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class ConnectivityFlow(private val connectivityManager: ConnectivityManager, private val context: Context) {
 
     private val _connectionStatus = MutableStateFlow<ConnectionStatus>(ConnectionStatus.Disconnected)
     val connectionStatus: StateFlow<ConnectionStatus> = _connectionStatus
+
+    init {
+        startPeriodicConnectionCheck()
+    }
+
+    private fun startPeriodicConnectionCheck() {
+        CoroutineScope(Dispatchers.IO).launch {
+            while (true) {
+                delay(2000)
+                checkInitialConnectionStatus()
+            }
+        }
+    }
+
 
     private val networkCallbackInstance =
         object : ConnectivityManager.NetworkCallback() {
@@ -22,7 +38,7 @@ class ConnectivityFlow(private val connectivityManager: ConnectivityManager, pri
                 super.onAvailable(network)
                 if (!isAirplaneModeOn()) {
                     val connectionType = getConnectionType()
-                    _connectionStatus.value = if (connectionType == ConnectionType.UNKNOWN) {
+                    _connectionStatus.value = if (connectionType == ConnectionType.DISCONNECTED) {
                         ConnectionStatus.Disconnected
                     } else {
                         ConnectionStatus.Connected(connectionType)
@@ -38,18 +54,7 @@ class ConnectivityFlow(private val connectivityManager: ConnectivityManager, pri
                     _connectionStatus.value = ConnectionStatus.Disconnected
                 }
             }
-
-            @RequiresApi(Build.VERSION_CODES.O)
-            override fun onUnavailable() {
-                super.onUnavailable()
-                // También podemos manejar el caso de red no disponible, si es necesario
-                _connectionStatus.value = ConnectionStatus.Disconnected
-            }
         }
-
-    init {
-        startListening()
-    }
 
     fun startListening() {
         val builder = NetworkRequest.Builder()
@@ -66,7 +71,7 @@ class ConnectivityFlow(private val connectivityManager: ConnectivityManager, pri
             _connectionStatus.value = ConnectionStatus.AirplaneMode
         } else {
             val connectionType = getConnectionType()
-            _connectionStatus.value = if (connectionType == ConnectionType.UNKNOWN) {
+            _connectionStatus.value = if (connectionType == ConnectionType.DISCONNECTED) {
                 ConnectionStatus.Disconnected
             } else {
                 ConnectionStatus.Connected(connectionType)
@@ -75,13 +80,13 @@ class ConnectivityFlow(private val connectivityManager: ConnectivityManager, pri
     }
 
     private fun getConnectionType(): ConnectionType {
-        val activeNetwork = connectivityManager.activeNetwork ?: return ConnectionType.UNKNOWN
-        val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork) ?: return ConnectionType.UNKNOWN
+        val activeNetwork = connectivityManager.activeNetwork ?: return ConnectionType.DISCONNECTED
+        val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork) ?: return ConnectionType.DISCONNECTED
 
         return when {
             capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> ConnectionType.WIFI
             capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> ConnectionType.MOBILE
-            else -> ConnectionType.UNKNOWN
+            else -> ConnectionType.DISCONNECTED
         }
     }
 
