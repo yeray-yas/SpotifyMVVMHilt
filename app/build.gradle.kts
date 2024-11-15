@@ -12,8 +12,6 @@ plugins {
     // FIREBASE
     alias(libs.plugins.googleServices)
     alias(libs.plugins.crashlytics)
-
-
 }
 
 android {
@@ -74,9 +72,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.runtime.livedata)
-    testImplementation(libs.junit)
 
-    //FIREBASE
+    // FIREBASE
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.auth)
@@ -87,7 +84,7 @@ dependencies {
     // NAVIGATION COMPOSE
     implementation(libs.androidx.navigation.compose)
 
-    //HILT
+    // HILT
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
@@ -96,6 +93,7 @@ dependencies {
     implementation(libs.coil)
 
     // TESTS
+    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
